@@ -1,0 +1,21 @@
+# Worktree-local Codex configuration for ce-chatgpt-bulk-delete.
+# Active worktree:
+# __CE_CHATGPT_BULK_DELETE_WORKTREE__
+#
+# This file is intentionally local/ignored.
+
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+project_doc_max_bytes = 65536
+file_opener = "vscode"
+notify = ["bash", "__CE_CHATGPT_BULK_DELETE_WORKTREE__/.codex/notify.sh"]
+
+[sandbox_workspace_write]
+network_access = false
+writable_roots = ["/home/didi/Downloads"]
+
+[shell_environment_policy]
+inherit = "all"
+
+[shell_environment_policy.set]
+CE_CHATGPT_BULK_DELETE_ROOT = "__CE_CHATGPT_BULK_DELETE_WORKTREE__"

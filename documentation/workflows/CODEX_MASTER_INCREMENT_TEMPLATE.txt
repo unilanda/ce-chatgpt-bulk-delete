@@ -1,0 +1,103 @@
+CE-CHATGPT-BULK-DELETE CODEX TASK TEMPLATE
+==========================================
+
+TITLE:
+  <TASK>
+
+WORKTREE:
+  <ABSOLUTE_WORKTREE_PATH>
+
+BRANCH:
+  <BRANCH>
+
+STARTING HEAD:
+  <EXACT_SHA>
+
+EXECUTION MODE
+--------------
+<FAST BOUNDED REPAIR / NORMAL BOUNDED INCREMENT / AUTONOMOUS MULTI-INCREMENT>
+
+GLOBAL GOAL
+-----------
+<desired end state>
+
+HARD BOUNDARIES
+---------------
+- Work only in the specified worktree.
+- Never modify sibling worktrees.
+- Never expose credentials, cookies, authorization tokens, or private chat data.
+- Never push or merge unless explicitly authorized.
+- Never perform real bulk deletion as an automated test.
+- Preserve unrelated work.
+- Keep AGENTS.md/.codex local files out of feature commits.
+
+PREFLIGHT
+---------
+pwd
+git branch --show-current
+git rev-parse HEAD
+git status --short --branch
+git worktree list
+
+Required:
+  path   = <WORKTREE>
+  branch = <BRANCH>
+  HEAD   = <STARTING_HEAD>
+
+INSPECT
+-------
+<files/current behavior>
+
+APPROVED DESIGN
+---------------
+<exact behavior and invariants>
+
+NON-GOALS
+---------
+<explicit exclusions>
+
+IMPLEMENTATION
+--------------
+<bounded implementation requirements>
+
+VERIFICATION
+------------
+<focused tests/checks>
+
+BROWSER / REAL ACCOUNT SMOKE
+----------------------------
+State explicitly whether user-run Chrome verification is required.
+
+Do not perform destructive real-account testing unless explicitly authorized.
+
+COMMIT POLICY
+-------------
+Default:
+  no commit
+  no push
+  no merge
+
+Override only when this task explicitly authorizes a named local checkpoint.
+
+STOP / ESCALATE
+---------------
+Stop if continuing requires:
+- architecture change;
+- destructive action;
+- permission expansion;
+- credential/private-data exposure;
+- unapproved account mutation;
+- push/merge/release;
+- changing an approved invariant.
+
+FINAL REPORT
+------------
+1. Starting HEAD.
+2. Files changed.
+3. Exact behavior implemented.
+4. Tests/checks and results.
+5. Browser/manual verification still required.
+6. Unexpected issues/deferred items.
+7. Final HEAD.
+8. Final git status.
+9. Commit/push/merge status.

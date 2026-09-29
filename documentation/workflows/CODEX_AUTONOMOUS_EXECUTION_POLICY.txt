@@ -1,0 +1,79 @@
+CE-CHATGPT-BULK-DELETE CODEX AUTONOMOUS EXECUTION POLICY
+========================================================
+
+PURPOSE
+-------
+Allow efficient execution of an already-approved local implementation plan
+without weakening review, Git, account, or destructive-action boundaries.
+
+DEFAULT MODE
+------------
+When a complete multi-increment plan is explicitly approved:
+
+- execute approved local increments sequentially;
+- do not ask for approval before routine repository-local edits;
+- do not ask before already-authorized focused tests/build checks;
+- continue between approved increments unless a stop condition occurs.
+
+PRE-AUTHORIZED LOCAL ACTIONS
+----------------------------
+Unless the active task says otherwise:
+
+- read/search the current worktree;
+- edit files inside the current worktree;
+- run focused local tests/checks;
+- run syntax/static/build checks;
+- create disposable local test artifacts;
+- create review bundles under authorized writable locations.
+
+Local Git commits are NOT automatically authorized merely by this policy.
+The active task must explicitly authorize named checkpoint commits.
+
+STOP / ASK ONLY FOR
+-------------------
+1. Material architecture/interface change outside the approved plan.
+2. Destructive or irreversible operation.
+3. Real ChatGPT account mutation not explicitly authorized.
+4. Push/merge/release/deployment.
+5. Shared-history rewrite or force operation.
+6. Credentials/cookies/tokens/private-data access beyond the approved task.
+7. Extension permission expansion not covered by the design.
+8. Failed invariant requiring a design change.
+9. External dependency/licensing issue requiring a product decision.
+10. Genuine instruction conflict affecting outcome or risk.
+
+DO NOT STOP MERELY TO ASK
+-------------------------
+- May I continue?
+- May I inspect another source file in this worktree?
+- May I run the already-authorized focused checks?
+- May I proceed to the next already-approved local increment?
+
+INCREMENT CONTRACT
+------------------
+For each increment:
+
+1. verify worktree/branch/HEAD/status;
+2. inspect relevant current source;
+3. implement only the approved scope;
+4. run focused fresh verification;
+5. record files/checks/issues;
+6. stop at the task's specified review boundary.
+
+GIT BOUNDARIES
+--------------
+Without explicit task authorization:
+
+- do not commit;
+- do not push;
+- do not merge;
+- do not force operations;
+- do not delete branches/worktrees;
+- do not modify sibling worktrees.
+
+AGENTS.md and .codex worktree-local files remain local/ignored.
+
+FINAL PRINCIPLE
+---------------
+Human attention is for decisions and account-impacting actions, not routine
+implementation ceremony.

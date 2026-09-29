@@ -1,0 +1,151 @@
+# ce-chatgpt-bulk-delete repository instructions for Codex
+
+## Repository scope
+
+This repository is our maintained version of the Chrome extension
+`ce-chatgpt-bulk-delete`.
+
+The extension manages ChatGPT conversation history. Changes can affect
+selection, classification, persistence, rate limiting, and destructive
+conversation-management actions, so preserve safety boundaries carefully.
+
+Current task goals belong in the active Codex task/chat. Durable development
+workflow belongs in maintained repository documentation once established.
+
+Before substantial work:
+
+- inspect current Git state;
+- verify the active worktree, branch, and HEAD;
+- inspect relevant source/tests/docs before editing;
+- preserve unrelated user changes;
+- distinguish upstream behavior from our maintained modifications.
+
+## Active worktree
+
+The active repository for this workspace is:
+
+    __CE_CHATGPT_BULK_DELETE_WORKTREE__
+
+Do not edit the sibling canonical checkout:
+
+    /home/didi/research/dev/tools/ce-chatgpt-bulk-delete
+
+unless an explicit task authorizes work there.
+
+Do not edit other sibling worktrees.
+
+## Project architecture
+
+Current upstream source is a small Chrome extension centered around:
+
+- `manifest.json`
+- `background.js`
+- `content.js`
+- `dashboard.html`
+- `dashboard.css`
+- `dashboard.js`
+- `db.js`
+- `README.md`
+- `ARCHITECTURE.md`
+
+Inspect current source rather than assuming these files or their responsibilities
+remain unchanged.
+
+## Engineering rules
+
+- Preserve existing behavior unless the active task explicitly changes it.
+- Prefer small explicit boundaries over unrelated refactors.
+- Treat destructive conversation actions conservatively.
+- Never interpret an unknown/unclassified conversation as safe for deletion
+  merely for convenience.
+- Never represent a failed remote deletion as a successful local deletion.
+- Keep local persistence consistent with confirmed remote outcomes.
+- Treat ChatGPT internal endpoints as unsupported/changeable implementation
+  details; inspect observed current behavior when endpoint/schema details matter.
+- Do not expose ChatGPT authorization tokens, cookies, credentials, or private
+  conversation contents in logs, fixtures, commits, or reports.
+- Do not weaken safety behavior merely to make a test pass.
+- When changing persisted IndexedDB data, consider compatibility with records
+  created by previous extension versions.
+- Keep extension permissions minimal; do not broaden permissions without a
+  task-specific reason.
+
+## Testing and gates
+
+There is currently no assumption of a large universal test suite.
+
+For each task:
+
+1. determine the narrowest relevant verification from current source;
+2. add focused automated tests when practical and justified;
+3. perform syntax/static checks appropriate to touched JavaScript/JSON/shell;
+4. run `git diff --check`;
+5. use a small real Chrome smoke when browser/runtime integration changed.
+
+Do not mass-delete real conversations as a test.
+
+Destructive browser smokes must use only a very small number of explicitly
+disposable conversations selected by the user.
+
+## Git and worktree safety
+
+- Begin substantial work with:
+  - `pwd`
+  - `git branch --show-current`
+  - `git rev-parse HEAD`
+  - `git status --short --branch`
+- Preserve unrelated changes.
+- Do not use `git reset --hard`, `git clean`, or broad restore operations.
+- Do not push, merge, force-push, delete branches/worktrees, or rewrite shared
+  history unless explicitly authorized.
+- For a normal substantial increment, stop dirty/uncommitted for independent
+  review unless the authoritative task explicitly authorizes checkpoint commits.
+- Local `AGENTS.md` and `.codex/*` files are worktree support files and must not
+  enter feature commits unless a later task deliberately promotes generic
+  templates/bootstrap infrastructure into tracked project files.
+
+## External/network actions
+
+Routine repository-local inspection/editing/testing is allowed within the
+configured workspace.
+
+Do not perform external destructive actions, publish releases, push Git state,
+or operate on the user's ChatGPT account unless the active task explicitly
+authorizes that operation.
+
+Browser/runtime testing involving the user's actual ChatGPT account is normally
+user-run.
+
+## Documentation
+
+When maintained behavior changes, update the relevant maintained documentation
+in the same increment when appropriate.
+
+Do not put temporary campaign/task state into repository-wide instructions.
+
+## Completion report
+
+For meaningful tasks report:
+
+- files changed;
+- exact behavior changed;
+- tests/checks run and outcomes;
+- unresolved uncertainty;
+- browser/manual verification still required;
+- current Git status;
+- whether any commit occurred.
+
+Do not claim push/merge unless it actually occurred.
+
+## Autonomous multi-increment work
+
+For an explicitly approved multi-increment task, read:
+
+    .codex/CODEX_AUTONOMOUS_EXECUTION_POLICY.txt
+
+and use:
+
+    .codex/CODEX_MASTER_INCREMENT_TEMPLATE.txt
+
+Do not infer autonomous commit permission unless the active task explicitly
+grants it.
