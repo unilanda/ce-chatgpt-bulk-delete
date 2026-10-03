@@ -1,7 +1,7 @@
 // content.js
 // Injected into https://chatgpt.com/*
 
-function injectBulkManageButton() {
+function injectManagerButton() {
   // Check if button already exists
   if (document.getElementById('chatgpt-bulk-manage-btn')) return;
 
@@ -15,7 +15,7 @@ function injectBulkManageButton() {
       <rect x="14" y="14" width="7" height="7"></rect>
       <rect x="3" y="14" width="7" height="7"></rect>
     </svg>
-    Bulk Manage
+    ChatGPT Manager
   `;
   
   // Style the button
@@ -123,11 +123,11 @@ function injectBulkManageButton() {
 // Use a MutationObserver to ensure the button stays injected even if React re-renders the DOM
 const observer = new MutationObserver(() => {
   if (!document.getElementById('chatgpt-bulk-manage-btn')) {
-    injectBulkManageButton();
+    injectManagerButton();
   }
 });
 
 observer.observe(document.body, { childList: true, subtree: true });
 
 // Initial injection attempt
-injectBulkManageButton();
+injectManagerButton();

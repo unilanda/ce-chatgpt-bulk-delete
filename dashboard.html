@@ -3,86 +3,424 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Steve's Tools: ChatGPT Bulk Delete</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>ChatGPT Manager</title>
   <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
-
-  <!-- Top Header -->
   <header class="top-header">
-    <div class="header-left">
-      <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg" style="color: #10a37f;"><path d="M21.928 11.607c-.202-.488-.635-.605-.928-.633V8c0-1.103-.897-2-2-2h-6V4.61c.305-.274.5-.668.5-1.11a1.5 1.5 0 0 0-3 0c0 .442.195.836.5 1.11V6H5c-1.103 0-2 .897-2 2v2.997l-.082.006A1 1 0 0 0 1.99 12l.01 5.804c0 .896.797 1.625 1.768 1.682l.232.013V20c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-.5c1.103 0 2-.897 2-2V12c0-.142-.027-.278-.072-.403zM7 16H5v-2h2v2zm0-4H5v-2h2v2zm12 4h-2v-2h2v2zm0-4h-2v-2h2v2z"></path></svg>
-      <h1>Steve's Tools: ChatGPT Bulk Delete</h1>
+    <div>
+      <h1>ChatGPT Manager</h1>
+      <p>Manage, find and act on your ChatGPT conversations.</p>
     </div>
-    <div class="header-right" style="display: flex; align-items: center; gap: 10px;">
-      <span id="sync-status" class="sync-status">Last synced: Never</span>
-      <input type="number" id="sync-limit-input" placeholder="Max to sync (blank = all)" style="width: 180px; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary);" />
-      <button id="clear-db-btn" class="btn btn-ghost" style="color: var(--danger-primary);">Clear Data</button>
-      <button id="sync-btn" class="btn btn-secondary">Sync Now</button>
+    <div class="header-actions">
+      <button id="sync-btn" class="btn btn-primary">Refresh history</button>
+      <button id="advanced-toggle-btn" class="btn btn-secondary" aria-expanded="false" aria-controls="advanced-panel">
+        Advanced <span id="advanced-toggle-icon" data-advanced-icon aria-hidden="true">▾</span>
+      </button>
     </div>
   </header>
 
-  <!-- Controls Bar -->
-  <div class="controls-bar">
-    <div class="search-container">
-      <input type="text" id="search-input" placeholder="Search across all conversations..." />
-    </div>
-    <div class="filters-container">
-      <label class="toggle-label" style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary); margin-right: 15px; font-weight: 500; cursor: pointer;">
-        <input type="checkbox" id="hide-projects-toggle" checked style="cursor: pointer;" />
-        Hide Folders & Projects
-      </label>
-      <input type="date" id="date-from" placeholder="From" />
-      <input type="date" id="date-to" placeholder="To" />
-    </div>
-  </div>
+  <main class="page-shell">
+    <section class="surface discover-section" aria-labelledby="discover-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="discover-heading">Discover conversations</h2>
+          <p>Refresh your history or find conversations by words and phrases.</p>
+        </div>
+      </div>
 
-  <!-- Main Content -->
-  <main class="main-content">
-    <table class="chat-table">
-      <thead>
-        <tr>
-          <th width="40"><input type="checkbox" id="select-all-checkbox" /></th>
-          <th class="sortable" data-sort="title">Conversation Title <span class="sort-icon"></span></th>
-          <th width="140" class="sortable" data-sort="location">Location <span class="sort-icon"></span></th>
-          <th width="150" class="sortable" data-sort="created">Created At <span class="sort-icon"></span></th>
-          <th width="150" class="sortable" data-sort="updated">Last Updated <span class="sort-icon">▼</span></th>
-          <th width="80">Actions</th>
-        </tr>
-      </thead>
-      <tbody id="chat-list-body">
-        <!-- Rows will be injected here via JS -->
-      </tbody>
-    </table>
+      <div class="discover-grid">
+        <article class="discover-card" aria-labelledby="history-heading">
+          <div>
+            <h3 id="history-heading">History</h3>
+            <p>Load or refresh your conversation history, newest first.</p>
+          </div>
+          <div class="inline-controls">
+            <label for="history-maximum-input">Maximum conversations</label>
+            <input id="history-maximum-input" type="text" inputmode="numeric" value="All" aria-describedby="history-maximum-help">
+            <button id="history-load-btn" class="btn btn-secondary">Refresh history</button>
+          </div>
+          <div class="button-row history-rebuild-actions">
+            <button id="history-rebuild-btn" class="btn btn-secondary">Rebuild from ChatGPT</button>
+            <button id="history-recover-search-btn" class="btn btn-ghost" hidden>Recover with content search</button>
+          </div>
+          <p id="history-maximum-help" class="help-text">Refresh merges new/changed records. Rebuild replaces only the local conversation inventory and reloads History from the beginning.</p>
+          <p id="history-status" class="run-status" role="status">History has not been loaded in this tab.</p>
+          <p id="history-inventory-status" class="inventory-status">0 conversations in local inventory</p>
+        </article>
+
+        <article class="discover-card" aria-labelledby="find-heading">
+          <div>
+            <h3 id="find-heading">Find by content</h3>
+            <p>Find conversations containing words or phrases.</p>
+          </div>
+          <label class="sr-only" for="search-queries-input">Words or phrases</label>
+          <textarea id="search-queries-input" rows="2" placeholder="Enter words or phrases, one per line"></textarea>
+          <div class="button-row">
+            <button id="search-sync-btn" class="btn btn-secondary">Find conversations</button>
+            <button id="search-sync-cancel-btn" class="btn btn-ghost" disabled>Stop</button>
+          </div>
+          <p id="search-status" class="run-status" role="status">No content search has run in this tab.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="advanced-panel" class="surface advanced-panel" aria-labelledby="advanced-heading" hidden>
+      <div class="section-heading">
+        <div>
+          <h2 id="advanced-heading">Advanced / Diagnostics</h2>
+          <p>Protocol details and repair tools for troubleshooting.</p>
+        </div>
+      </div>
+
+      <p id="runtime-build-marker" class="technical-status" role="status">
+        Runtime identity is loading…
+      </p>
+
+      <details>
+        <summary>Search details</summary>
+        <pre id="search-sync-status" class="technical-status">Search has not run.</pre>
+      </details>
+
+      <div class="advanced-block" aria-labelledby="diagnostic-heading">
+        <div>
+          <h3 id="diagnostic-heading">Read-only search diagnostic</h3>
+          <p>Runs one bounded query without saving results. Reports aggregate schema facts only.</p>
+        </div>
+        <label for="diagnostic-query-input">Query</label>
+        <input id="diagnostic-query-input" type="text">
+        <label for="diagnostic-pages-select">Page limit</label>
+        <select id="diagnostic-pages-select">
+          <option value="1" selected>1</option>
+          <option value="2">2</option>
+        </select>
+        <div class="button-row">
+          <button id="diagnostic-run-btn" class="btn btn-secondary">Run read-only diagnostic</button>
+          <button id="diagnostic-copy-btn" class="btn btn-ghost" disabled>Copy sanitized report</button>
+        </div>
+        <pre id="diagnostic-status" class="technical-status">No diagnostic has run. Nothing here is persisted.</pre>
+      </div>
+
+      <div class="advanced-block" aria-labelledby="eligibility-heading">
+        <div>
+          <h3 id="eligibility-heading">Verification tools</h3>
+          <p>Checks unverified search results conservatively. Ambiguous results remain protected.</p>
+        </div>
+        <div class="button-row">
+          <button id="eligibility-verify-batch-btn" class="btn btn-secondary">Verify up to 10</button>
+          <button id="eligibility-cancel-btn" class="btn btn-ghost" disabled>Stop</button>
+          <button id="eligibility-copy-btn" class="btn btn-ghost" disabled>Copy diagnostic</button>
+        </div>
+        <pre id="eligibility-status" class="technical-status">Verification has not run.</pre>
+      </div>
+
+      <div class="advanced-block danger-zone" aria-labelledby="clear-local-heading">
+        <div>
+          <h3 id="clear-local-heading">Clear local conversation inventory</h3>
+          <p>Removes only the locally stored conversation list. Manager settings and deletion-job state are preserved. This does not delete ChatGPT conversations.</p>
+        </div>
+        <button id="clear-db-btn" class="btn btn-danger-outline">Clear local inventory</button>
+      </div>
+    </section>
+
+    <section id="active-jobs-section" class="surface active-jobs" aria-labelledby="active-jobs-heading" hidden>
+      <div class="section-heading">
+        <div>
+          <h2 id="active-jobs-heading">Active Jobs</h2>
+          <p>Deletion continues safely in the background if this dashboard closes.</p>
+        </div>
+      </div>
+      <article id="active-job-card" class="active-job-card">
+        <div>
+          <h3 id="active-job-title">Deletion job</h3>
+          <p id="active-job-status"></p>
+          <p id="active-job-next" class="help-text"></p>
+          <p id="active-job-timing" class="help-text"></p>
+          <p id="active-job-error" class="warning-text" role="status"></p>
+        </div>
+        <div class="button-row active-job-actions">
+          <button id="active-job-pause-btn" class="btn btn-secondary">Pause</button>
+          <button id="active-job-resume-btn" class="btn btn-primary">Review &amp; Resume</button>
+          <button id="active-job-review-btn" class="btn btn-secondary">Review remaining</button>
+          <button id="active-job-cancel-btn" class="btn btn-danger-outline">Cancel remaining</button>
+          <button id="active-job-view-btn" class="btn btn-ghost">View job</button>
+        </div>
+      </article>
+    </section>
+
+    <section id="recent-activity-section" class="surface recent-activity" aria-labelledby="recent-activity-heading" hidden>
+      <div class="section-heading">
+        <div>
+          <h2 id="recent-activity-heading">Recent activity</h2>
+          <p>Most recent completed deletion job.</p>
+        </div>
+      </div>
+      <article class="recent-job-card">
+        <div>
+          <h3 id="recent-job-title">Deletion complete</h3>
+          <p id="recent-job-status"></p>
+          <p id="recent-job-timing" class="help-text"></p>
+        </div>
+        <button id="recent-job-dismiss-btn" class="btn btn-ghost">Dismiss</button>
+      </article>
+    </section>
+
+    <p id="manager-metadata-status" class="help-text" role="status">Opening local organization metadata…</p>
+    <section id="collections-section" class="surface collections-section" aria-labelledby="collections-heading">
+      <div class="section-heading">
+        <div>
+          <h2 id="collections-heading">Collections</h2>
+          <p>Organize conversations locally. Collections do not modify ChatGPT.</p>
+        </div>
+        <button id="new-collection-btn" class="btn btn-secondary">New collection</button>
+      </div>
+      <div id="collections-list" class="collection-list" role="list"></div>
+      <p id="collections-empty" class="empty-state">No collections yet. Create one or add selected conversations to a collection.</p>
+    </section>
+
+    <section class="surface" aria-labelledby="tags-heading">
+      <div class="section-heading"><div><h2 id="tags-heading">Tags</h2>
+      <p>Lightweight labels, separate from Collections and provider Projects.</p></div>
+      <button id="new-tag-btn" class="btn btn-secondary">New tag</button></div>
+      <div id="tags-list" class="collection-list" role="list"></div>
+      <p id="tags-empty" class="empty-state">No tags yet. Tag selected conversations to organize them locally.</p>
+    </section>
+
+    <section class="surface workspace" aria-labelledby="workspace-heading">
+      <div class="section-heading workspace-heading">
+        <div>
+          <h2 id="workspace-heading">Conversations</h2>
+          <p id="inventory-count">0 conversations</p>
+        </div>
+      </div>
+
+      <div class="manager-view-row"><label for="manager-view-filter">View
+        <select id="manager-view-filter"><option value="all">All conversations</option>
+        <option value="collections">In Collections</option><option value="projects">Projects</option>
+        <option value="archived">Archived</option><option value="needs_update">Needs update</option>
+        <option value="clusters" disabled>Clusters — analysis engine not connected</option></select></label>
+        <p id="manager-view-help" class="help-text">Archive and analysis integrations are not connected yet.</p></div>
+      <div class="filter-grid" aria-label="Conversation filters">
+        <label class="wide-filter" for="search-input">
+          Title
+          <input id="search-input" type="search" placeholder="Filter by title">
+        </label>
+        <label for="type-filter">
+          Type
+          <select id="type-filter">
+            <option value="all">All types</option>
+            <option value="standalone">Standalone</option>
+            <option value="project">Project</option>
+            <option value="custom-gpt">Custom GPT</option>
+            <option value="unverified">Unverified</option>
+          </select>
+        </label>
+        <label for="updated-from">
+          Updated from
+          <input id="updated-from" type="date">
+        </label>
+        <label for="updated-to">
+          Updated to
+          <input id="updated-to" type="date">
+        </label>
+        <label for="collection-filter">
+          Collection
+          <select id="collection-filter">
+            <option value="all">All collections</option>
+          </select>
+        </label>
+        <label for="tag-filter">Tag<select id="tag-filter"><option value="all">All tags</option></select></label>
+        <label for="status-filter">
+          Status
+          <select id="status-filter">
+            <option value="all">All statuses</option>
+            <option value="verified">Verified</option>
+            <option value="unverified">Needs verification</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="table-wrap">
+        <table class="chat-table">
+          <thead>
+            <tr>
+              <th class="select-column"><input type="checkbox" id="select-all-checkbox" aria-label="Select all visible conversations"></th>
+              <th id="sort-title-header" class="sortable" data-sort="title">Title <span id="sort-title-icon" class="sort-icon"></span></th>
+              <th id="sort-type-header" class="sortable type-column" data-sort="type">Type <span id="sort-type-icon" class="sort-icon"></span></th>
+              <th id="sort-updated-header" class="sortable updated-column" data-sort="updated">Updated <span id="sort-updated-icon" class="sort-icon">▼</span></th>
+              <th class="archive-column">Archive / Tags</th><th class="status-column">Status</th>
+            </tr>
+          </thead>
+          <tbody id="chat-list-body"></tbody>
+        </table>
+      </div>
+      <details class="capability-guide"><summary>What the upcoming tools will do</summary>
+        <p><strong>Save / Update:</strong> capture complete chats and track immutable archive revisions.</p>
+        <p><strong>Analyze:</strong> similarity, clusters, duplicates and superseded discussions. No model runs in this build.</p>
+        <p><strong>Summarize:</strong> general, technical, timeline, decisions, open questions or handoff.</p>
+        <p><strong>Merge:</strong> raw source-preserving export; structured combination with provenance; canonical current knowledge. Semantic merges cannot guarantee losslessness.</p>
+        <p><strong>Move:</strong> provider Project organization after its transport is validated. Local Collections do not move chats.</p>
+      </details>
+      <p id="empty-state" class="empty-state hidden">No conversations match these filters.</p>
+    </section>
+
   </main>
 
-  <!-- Floating Action Banner -->
-  <div id="action-banner" class="action-banner hidden">
-    <span id="selected-count-text">0 conversations selected</span>
-    <div class="action-buttons">
-      <button id="deselect-btn" class="btn btn-ghost">Deselect All</button>
-      <button id="delete-selected-btn" class="btn btn-danger">Delete Selected</button>
+  <div id="fixed-job-bar" class="fixed-job-bar" role="region" aria-label="Active deletion job" hidden>
+    <div>
+      <strong id="fixed-job-summary">Deletion job</strong>
+      <span id="fixed-job-timing"></span>
+    </div>
+    <div class="button-row">
+      <button id="fixed-job-pause-btn" class="btn btn-secondary">Pause</button>
+      <button id="fixed-job-resume-btn" class="btn btn-primary">Resume</button>
+      <button id="fixed-job-details-btn" class="btn btn-ghost">Details</button>
     </div>
   </div>
 
-  <!-- Progress Overlay Modal -->
-  <div id="progress-modal" class="modal-overlay hidden">
-    <div class="modal-content">
-      <h2 id="modal-title">Deleting Conversations...</h2>
-      <p id="modal-desc">Please do not close this tab.</p>
-      <div class="progress-bar-container">
-        <div id="progress-bar-fill" class="progress-bar-fill"></div>
-      </div>
-      <p id="modal-status" class="modal-status">0 / 0</p>
-      <div id="modal-actions" class="modal-actions hidden">
-        <button id="modal-cancel-btn" class="btn btn-secondary">Close</button>
+  <div id="action-banner" class="action-banner hidden" role="region" aria-label="Selected conversation actions">
+    <span id="selected-count-text">0 selected</span>
+    <div class="manager-action-buttons">
+      <span class="capability-wrap" tabindex="0" aria-describedby="save-update-btn-reason"><button id="save-update-btn" class="btn btn-secondary" disabled title="Capture engine not connected yet." data-action="archive.save">Save / Update</button><span id="save-update-btn-reason" class="capability-reason" role="tooltip">Capture engine not connected yet.</span></span>
+      <span class="capability-wrap" tabindex="0" aria-describedby="add-to-collection-btn-reason"><button id="add-to-collection-btn" class="btn btn-secondary"  title="Select conversations first." data-action="collection.add">Collection</button><span id="add-to-collection-btn-reason" class="capability-reason" role="tooltip">Select conversations first.</span></span>
+      <span class="capability-wrap" tabindex="0" aria-describedby="tag-selected-btn-reason"><button id="tag-selected-btn" class="btn btn-secondary"  title="Select conversations first." data-action="tag.add">Tag</button><span id="tag-selected-btn-reason" class="capability-reason" role="tooltip">Select conversations first.</span></span>
+      <span class="capability-wrap" tabindex="0" aria-describedby="analyze-selected-btn-reason"><button id="analyze-selected-btn" class="btn btn-secondary" disabled title="Analysis engine not connected; archived content will be required." data-action="analyze.similar">Analyze</button><span id="analyze-selected-btn-reason" class="capability-reason" role="tooltip">Analysis engine not connected; archived content will be required.</span></span>
+      <span class="capability-wrap" tabindex="0" aria-describedby="summarize-selected-btn-reason"><button id="summarize-selected-btn" class="btn btn-secondary" disabled title="Summary engine not connected; archived content will be required." data-action="summarize">Summarize</button><span id="summarize-selected-btn-reason" class="capability-reason" role="tooltip">Summary engine not connected; archived content will be required.</span></span>
+      <span class="capability-wrap" tabindex="0" aria-describedby="merge-selected-btn-reason"><button id="merge-selected-btn" class="btn btn-secondary" disabled title="Merge engines not connected; archived content will be required." data-action="merge.canonical">Merge</button><span id="merge-selected-btn-reason" class="capability-reason" role="tooltip">Merge engines not connected; archived content will be required.</span></span>
+      <span class="capability-wrap" tabindex="0" aria-describedby="move-selected-btn-reason"><button id="move-selected-btn" class="btn btn-secondary" disabled title="Project transport not validated yet." data-action="project.move">Move</button><span id="move-selected-btn-reason" class="capability-reason" role="tooltip">Project transport not validated yet.</span></span>
+      <span class="capability-wrap" tabindex="0" aria-describedby="delete-selected-btn-reason"><button id="delete-selected-btn" class="btn btn-danger"  title="Select conversations first." data-action="delete">Delete</button><span id="delete-selected-btn-reason" class="capability-reason" role="tooltip">Select conversations first.</span></span>
+      <button id="remove-from-collection-btn" class="btn btn-ghost" hidden>Remove from collection</button>
+      <button id="remove-tag-btn" class="btn btn-ghost" hidden>Remove tag</button>
+      <button id="deselect-btn" class="btn btn-ghost">Deselect all</button>
+    </div>
+  </div>
+
+  <div id="collection-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="collection-modal-title">
+    <div class="modal-content collection-modal-content">
+      <h2 id="collection-modal-title">Add to collection</h2>
+      <p id="collection-modal-copy">Choose an existing collection or create a new one.</p>
+      <label for="collection-modal-select">Existing collection</label>
+      <select id="collection-modal-select"></select>
+      <label for="collection-modal-name">New collection name</label>
+      <input id="collection-modal-name" type="text" maxlength="120" placeholder="Optional new collection name">
+      <p id="collection-modal-status" class="warning-text" role="status"></p>
+      <div class="modal-actions">
+        <button id="collection-modal-cancel-btn" class="btn btn-secondary">Cancel</button>
+        <button id="collection-modal-confirm-btn" class="btn btn-primary">Add</button>
       </div>
     </div>
   </div>
 
+  <div id="tag-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="tag-modal-title">
+    <div class="modal-content tag-modal-content">
+      <h2 id="tag-modal-title">Add to tag</h2>
+      <p id="tag-modal-copy">Choose an existing tag or create a new one.</p>
+      <label for="tag-modal-select">Existing tag</label>
+      <select id="tag-modal-select"></select>
+      <label for="tag-modal-name">New tag name</label>
+      <input id="tag-modal-name" type="text" maxlength="120" placeholder="Optional new tag name">
+      <p id="tag-modal-status" class="warning-text" role="status"></p>
+      <div class="modal-actions">
+        <button id="tag-modal-cancel-btn" class="btn btn-secondary">Cancel</button>
+        <button id="tag-modal-confirm-btn" class="btn btn-primary">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="progress-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-content delete-wizard">
+      <section id="delete-confirm-panel">
+        <h2 id="modal-title">Delete selected conversations</h2>
+        <p id="delete-stage-indicator" class="wizard-stages" aria-live="polite">1 Prepare → 2 Review → 3 Start</p>
+        <p id="delete-confirm-copy">Selected conversations stay selected until deletion starts.</p>
+        <p id="delete-plan-summary" class="plan-summary"></p>
+        <p id="delete-preflight-status" class="warning-text" role="status"></p>
+
+        <section id="delete-prepare-panel" class="wizard-panel">
+          <h3>Prepare</h3>
+          <p id="delete-prepare-status" role="status">Inspecting selected conversations…</p>
+        </section>
+
+        <section id="delete-review-panel" class="wizard-panel" hidden>
+          <h3>Review</h3>
+          <div class="review-category-list">
+            <p id="delete-review-standalone"></p>
+            <p id="delete-review-project"></p>
+            <p id="delete-review-custom-gpt"></p>
+            <p id="delete-review-unresolved"></p>
+          </div>
+          <div id="delete-project-warning" class="project-warning" hidden></div>
+          <pre id="delete-project-list" class="project-list" hidden></pre>
+          <div class="button-row plan-resolution-actions">
+            <button id="retry-unresolved-btn" class="btn btn-secondary" hidden>Retry verification</button>
+            <button id="exclude-unresolved-btn" class="btn btn-secondary" hidden>Exclude unresolved</button>
+            <button id="exclude-custom-gpt-btn" class="btn btn-secondary" hidden>Exclude Custom GPT</button>
+            <button id="approve-projects-btn" class="btn btn-secondary" hidden>Review Project conversations</button>
+            <button id="remove-blocked-btn" class="btn btn-secondary" hidden>Remove blocked from this job</button>
+          </div>
+        </section>
+
+        <section id="delete-start-panel" class="wizard-panel" hidden>
+          <h3>Start</h3>
+          <label class="interval-field" for="delete-interval-input">
+            Delay target
+            <span><input type="number" id="delete-interval-input" min="1" step="1" value="600"> seconds</span>
+          </label>
+          <p class="help-text">Default 600 seconds. Positive whole seconds are accepted.</p>
+          <p id="delete-fast-timing-warning" class="warning-text" hidden>
+            Fast background timing is best-effort. Chrome may delay sub-30-second jobs if the background worker sleeps. The job remains safe and will not double-delete.
+          </p>
+          <p id="delete-interval-status" class="help-text">Minimum 1 second.</p>
+        </section>
+
+        <div class="modal-actions">
+          <button id="cancel-delete-confirm-btn" class="btn btn-secondary">Cancel</button>
+          <button id="delete-start-back-btn" class="btn btn-secondary" hidden>Back</button>
+          <button id="delete-review-continue-btn" class="btn btn-primary" hidden>Continue to Start</button>
+          <button id="confirm-delete-btn" class="btn btn-danger" hidden disabled>Start deletion</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="runtime-identity.js"></script>
+  <script src="timestamp-utils.js"></script>
+  <script src="conversation-policy.js"></script>
+  <script src="history-sync.js"></script>
+  <script src="inventory-resync.js"></script>
+  <script src="search-core.js"></script>
+  <script src="search-sync.js"></script>
+  <script src="eligibility-core.js"></script>
+  <script src="delete-preparation.js"></script>
+  <script src="deletion-core.js"></script>
+  <script src="delete-job.js"></script>
+  <script src="job-store.js"></script>
+  <script src="dashboard-view.js"></script>
+  <script src="dashboard-controls.js"></script>
+  <script src="inventory-workspace.js"></script>
+  <script src="manager-validation.js"></script>
+  <script src="conversation-ref.js"></script>
+  <script src="provider-capabilities.js"></script>
+  <script src="manager-meta-db.js"></script>
+  <script src="organization-repository.js"></script>
+  <script src="collection-service.js"></script>
+  <script src="tag-service.js"></script>
+  <script src="archive-freshness.js"></script>
+  <script src="archive-registry.js"></script>
+  <script src="artifact-service.js"></script>
+  <script src="analysis-repository.js"></script>
+  <script src="manager-prerequisites.js"></script>
+    <script src="manager-actions.js"></script>
+  <script src="analysis-contracts.js"></script>
+  <script src="manager-job-contracts.js"></script>
+  <script src="provider-adapters.js"></script>
+  <script src="browser-runtime-adapter.js"></script>
+  <script src="capture-tab-runner.js"></script>
+  <script src="capture-orchestrator.js"></script>
+  <script src="manager-workspace-ui.js"></script>
+  <script src="dashboard-dom.js"></script>
+  <script src="delete-job-view.js"></script>
+  <script src="job-client.js"></script>
   <script src="db.js"></script>
   <script src="dashboard.js"></script>
 </body>

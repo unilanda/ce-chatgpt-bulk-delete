@@ -1,13 +1,25 @@
-// db.js
-// A lightweight Promise-wrapper for IndexedDB
+(function attachChatDB(root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  root.ChatDB = api.ChatDB;
+  root.chatDB = api.chatDB;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function createChatDBModule() {
+  'use strict';
 
-class ChatDB {
-  constructor() {
-    this.dbName = 'ChatGPT_BulkManager_DB';
-    this.dbVersion = 1;
-    this.storeName = 'conversations';
-    this.db = null;
-  }
+  // A lightweight Promise-wrapper for the extension origin's IndexedDB.
+  class ChatDB {
+    constructor({
+      indexedDBImpl = globalThis.indexedDB,
+      dbName = 'ChatGPT_BulkManager_DB',
+      dbVersion = 1,
+      storeName = 'conversations'
+    } = {}) {
+      this.indexedDB = indexedDBImpl;
+      this.dbName = dbName;
+      this.dbVersion = dbVersion;
+      this.storeName = storeName;
+      this.db = null;
+    }
 
   // Initialize and open the database
   init() {
@@ -17,7 +29,11 @@ class ChatDB {
         return;
       }
 
-      const request = indexedDB.open(this.dbName, this.dbVersion);
+      if (!this.indexedDB || typeof this.indexedDB.open !== 'function') {
+        reject(new Error('IndexedDB is unavailable'));
+        return;
+      }
+      const request = this.indexedDB.open(this.dbName, this.dbVersion);
 
       request.onerror = (event) => {
         console.error("IndexedDB error:", event.target.error);
@@ -101,7 +117,11 @@ class ChatDB {
       request.onerror = (event) => reject(event.target.error);
     });
   }
-}
+  }
 
-// Export a singleton instance
-const chatDB = new ChatDB();
+  // Dashboard and service-worker instances use this same extension-origin
+  // database name; IndexedDB supplies the cross-context shared persistence.
+  const chatDB = new ChatDB();
+
+  return { ChatDB, chatDB };
+});

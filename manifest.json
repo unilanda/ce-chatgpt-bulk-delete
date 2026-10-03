@@ -1,10 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "Steve's Tools: ChatGPT Bulk Delete",
+  "name": "ChatGPT Manager",
   "version": "1.0",
-  "description": "A fast, local-first dashboard to search and bulk-delete your ChatGPT history.",
+  "description": "A local-first dashboard to manage, find, and act on your ChatGPT conversations.",
   "permissions": [
-    "storage"
+    "storage",
+    "alarms"
   ],
   "host_permissions": [
     "https://chatgpt.com/*"
@@ -29,6 +30,6 @@
     }
   ],
   "action": {
-    "default_title": "Open ChatGPT History Dashboard"
+    "default_title": "Open ChatGPT Manager"
   }
 }
