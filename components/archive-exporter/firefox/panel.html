@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ChatGPT Archive Exporter for Firefox v1.4.0</title>
+  <link rel="stylesheet" href="panel.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">A</div>
+        <div>
+          <h1>Archive Exporter · Firefox</h1>
+          <p id="pageSummary">Checking current tab…</p>
+        </div>
+      </div>
+      <button id="closePanelBtn" class="icon-button" title="Close panel" aria-label="Close panel">×</button>
+    </header>
+
+    <section class="status-card">
+      <div class="status-head">
+        <span id="statusDot" class="status-dot"></span>
+        <strong id="phase">Idle</strong>
+        <span id="percentLabel">0%</span>
+      </div>
+
+      <div id="progressTrack" class="progress-track">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+
+      <div id="progressDetail" class="progress-detail">Approx. 0% complete · idle</div>
+
+      <div class="stats">
+        <span>Adapter <b id="adapter">—</b></span>
+        <span>Turns <b id="captured">0</b></span>
+        <span>Pass <b id="pass">0</b></span>
+      </div>
+
+      <p id="hint">Open a page, then start the exporter.</p>
+    </section>
+
+    <section class="options-card">
+      <label class="section-label" for="preset">Export preset</label>
+      <select id="preset">
+        <option value="recommended">Recommended — small HTML + complete KaTeX CSS</option>
+        <option value="small">Compact — smallest HTML</option>
+        <option value="selfContained">Single HTML — portable but largest</option>
+        <option value="ctrlS">Ctrl-S fidelity — ChatGPT only</option>
+      </select>
+
+      <div id="presetSummary" class="preset-summary">
+        ZIP with small HTML + external CSS + Markdown + TXT. Complete KaTeX layout CSS. Remote fonts may require internet.
+      </div>
+
+      <div class="checkbox-grid">
+        <label><input id="downloadHtml" type="checkbox" checked> HTML</label>
+        <label><input id="downloadMarkdown" type="checkbox" checked> Markdown</label>
+        <label><input id="downloadText" type="checkbox" checked> TXT</label>
+        <label><input id="packageAsZip" type="checkbox" checked> ZIP package</label>
+      </div>
+
+      <details id="advancedOptions" class="advanced">
+        <summary>Advanced options</summary>
+
+        <div class="advanced-body">
+          <label class="section-label" for="gapGuardMode">Virtualized-gap guard</label>
+          <select id="gapGuardMode">
+            <option value="repair">Repair suspicious gaps — recommended</option>
+            <option value="warn">Warn only — do not backtrack</option>
+            <option value="off">Off</option>
+          </select>
+
+          <label class="section-label" for="mathStyleMode">Math layout override</label>
+          <select id="mathStyleMode">
+            <option value="auto">Use preset default</option>
+            <option value="css">Complete unscoped OpenAI KaTeX CSS — recommended</option>
+            <option value="computed">Full computed math snapshot — very large</option>
+            <option value="inline">Original inline math only — smallest</option>
+          </select>
+
+          <div class="checkbox-stack">
+            <label><input id="embedTargetedMathCodeCssRules" type="checkbox" checked> Use targeted OpenAI KaTeX/code CSS</label>
+            <label><input id="showInPageProgress" type="checkbox"> Also show small in-page panel</label>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="actions">
+      <button id="startBtn" class="primary">Export current page</button>
+      <button id="stopBtn" disabled>Stop & save</button>
+      <button id="cancelBtn" class="danger" disabled>Cancel</button>
+    </section>
+
+    <section class="note">
+      <strong>How it behaves</strong>
+      <p>Click the toolbar icon to open or hide this Firefox sidebar. It stays available while the export runs. Closing the sidebar does not cancel a running job; reopen it to restore progress. After completion, close it with × or click the toolbar icon again.</p>
+    </section>
+  </main>
+
+  <script src="panel.js"></script>
+</body>
+</html>
