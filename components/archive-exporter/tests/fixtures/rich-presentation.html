@@ -1,0 +1,42 @@
+<article id="rich-presentation-root">
+  <p id="prose-before">Prose before code.</p>
+  <div class="current-code-card">
+    <div><span>JSON</span><button aria-label="Copy">Copy</button></div>
+    <div dir="ltr"><code class="whitespace-pre block">{
+  "alpha": 1,
+  "nested": {
+    "beta": true
+  }
+}</code></div>
+  </div>
+  <p id="prose-between">Prose between code cards.</p>
+  <div class="current-code-card-unknown">
+    <div><span>Unrecognized</span></div>
+    <div dir="ltr"><code class="whitespace-pre block" data-language="brainlang">BEGIN
+  opaque token
+END</code></div>
+  </div>
+  <table id="sample-table">
+    <thead><tr><th>Name</th><th>Value</th></tr></thead>
+    <tbody><tr><td>alpha</td><td>42</td></tr></tbody>
+  </table>
+  <div class="katex-display" id="sample-math">
+    <span class="katex"><span class="katex-mathml"><math><mi>x</mi><mo>=</mo><mn>1</mn></math></span><span class="katex-html"><span class="base">x = 1</span></span></span>
+  </div>
+  <section data-testid="writing-block-container" id="writing-block">
+    <header data-testid="writing-block-header-surface">
+      <button aria-selected="true">Markdown</button>
+      <button aria-label="Copy">Copy</button>
+    </header>
+    <div class="writing-block-editor">
+      <div class="ProseMirror" contenteditable="true" role="textbox" tabindex="0">
+        <h2>Preserved heading</h2><p>Preserved output body.</p>
+      </div>
+    </div>
+  </section>
+  <div class="file-tile-card" id="attachment-chip">
+    <svg aria-hidden="true"><circle cx="5" cy="5" r="4"></circle></svg>
+    <span>quarterly-results.csv</span><span>CSV</span>
+  </div>
+  <p id="prose-after">Prose after attachment.</p>
+</article>
