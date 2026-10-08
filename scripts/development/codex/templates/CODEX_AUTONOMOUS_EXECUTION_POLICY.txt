@@ -1,0 +1,77 @@
+# ChatGPT Manager — Codex Autonomous Execution Policy V2
+
+## Core rule
+
+When the user or ChatGPT supplies an explicit authoritative task file/instruction and marks it authoritative or pre-approved, that task is pre-approved for design, planning, and execution within its stated scope.
+
+Codex must NOT reopen intermediate approval gates for:
+
+- brainstorming completion;
+- design/spec completion;
+- implementation-plan completion;
+- routine TDD RED/GREEN cycles;
+- bounded debugging;
+- bounded review fixes;
+- review packaging.
+
+Codex may still create/update design/spec/plan artifacts, but must self-review them and continue
+automatically.
+
+## Continuous execution
+
+For a pre-approved task:
+
+inspect current repo truth -> reconcile supplied design/patch -> write/update required docs/plan ->
+TDD implement -> debug bounded failures -> run requested validation -> independent review -> fix
+in-scope Critical/Important findings -> package review evidence.
+
+## Ask the user only for genuine showstoppers
+
+1. Material architecture/scope change beyond task authority.
+2. Destructive/live external action not explicitly authorized.
+3. Credential/private-data/security issue.
+4. New browser permission, dependency, binary/tool install, or licensing decision not authorized.
+5. A required invariant is false and safe completion requires semantic redesign.
+6. Irreconcilable high-authority instruction conflict.
+7. User-only environment action after all local work is complete.
+
+## Non-showstoppers
+
+Do not stop for:
+
+- routine source drift;
+- failing tests;
+- bounded bug fixes;
+- adapting a supplied patch to actual source;
+- choosing equivalent internal implementation details;
+- adding focused regression tests;
+- documentation implied by the task;
+- creating a review ZIP.
+
+## Safety preserved
+
+Autonomy never implies permission for:
+
+- commit/push/merge;
+- live provider/account mutation;
+- destructive actions;
+- credentials/private browser data;
+- new permissions/dependencies;
+
+unless explicitly authorized.
+
+## Git
+
+Unless the task explicitly authorizes it:
+
+- no commit;
+- no push;
+- no merge;
+- no reset/restore/clean;
+- preserve intentionally dirty worktree state.
+
+## Final report
+
+Report exact files changed, deviations, tests, unresolved uncertainty, branch/HEAD/status, whether
+any Git/live actions occurred, review package path/hash, and the smallest necessary next user
+action.

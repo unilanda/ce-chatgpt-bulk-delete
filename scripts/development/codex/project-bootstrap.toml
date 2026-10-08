@@ -1,0 +1,27 @@
+schema_version = 1
+project_slug = "ce-chatgpt-bulk-delete"
+project_root_env = "CE_CHATGPT_BULK_DELETE_ROOT"
+downloads_subdir = "ce_chatgpt_bulk_delete_codex"
+rules_basename = "ce_chatgpt_bulk_delete.rules"
+
+[templates]
+agents = "templates/AGENTS.md.in"
+autonomy = "templates/CODEX_AUTONOMOUS_EXECUTION_POLICY.txt"
+task = "templates/CODEX_MASTER_INCREMENT_TEMPLATE.txt"
+rules = "templates/project.rules"
+
+[sandbox]
+network_access = false
+writable_roots = [
+  "{{HOME}}/Downloads",
+]
+
+[hooks]
+post_bootstrap = ""
+
+[validation]
+forbidden_fixed_strings = []
+forbidden_regex_patterns = [
+  "NucSyn|nucsyn_311|NUCSYN_|RED8|/tamir2/|src/3rd|localhost:6000",
+  "(^|[^A-Za-z0-9_])RNA([^A-Za-z0-9_]|$)",
+]

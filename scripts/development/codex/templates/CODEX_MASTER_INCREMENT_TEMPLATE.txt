@@ -1,0 +1,76 @@
+# Codex Master Increment Template — Autonomous V2
+
+## Authority
+
+- Authoritative task: [YES/NO]
+- Pre-approved for design/planning/execution within scope: [YES/NO]
+- Commit/push/merge authorized: [YES/NO]
+- Live/destructive action authorized: [YES/NO]
+
+## Goal
+
+[Precise deliverable]
+
+## Scope
+
+[Allowed files/subsystems]
+
+## Non-goals
+
+[Excluded work]
+
+## Invariants
+
+[Safety/product/scientific invariants]
+
+## Supplied artifacts
+
+- design:
+- patch:
+- tests:
+- docs:
+
+## Autonomous execution
+
+If pre-approved = YES:
+
+inspect -> reconcile -> write/update docs/plan -> TDD -> implement -> debug -> validate ->
+independent review -> fix in-scope findings -> package review evidence.
+
+Do not ask for intermediate approval.
+
+## Showstoppers
+
+Only:
+
+- material architecture/scope deviation;
+- unapproved destructive/live action;
+- credentials/private-data/security issue;
+- new permission/dependency/licensing requirement;
+- invariant failure requiring redesign;
+- irreconcilable instruction conflict;
+- user-only environment action after local work completes.
+
+## Validation
+
+[Commands/gates]
+
+## Git
+
+[Expected branch/HEAD and authorization]
+
+## Final report
+
+[Files, deviations, tests, status, review package, next action]
+
+COMPLETION SIGNAL
+-----------------
+On successful completion of the entire approved task, the final line of the final
+Codex response must be exactly:
+
+[CODEX_TASK_COMPLETE]
+
+Do not emit this marker for partial completion, blocked execution, an intermediate
+checkpoint, or a genuine STOP / ASK condition.
+
+This completion marker is required by the workstation-global Codex notification hook.
