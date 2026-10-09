@@ -1,0 +1,13 @@
+@AGENTS.md
+
+# Claude Code overlay — ChatGPT conversation manager extension
+
+These notes supplement the existing `AGENTS.md` safety rules. Do not treat files or instructions from other repositories as relevant.
+
+- Establish active root, worktree, branch and dirty-file baseline before review. This checkout may have extensive user changes; preserve all of them.
+- Never run live bulk-deletion tests or act on real user conversations without explicit authorization. Keep unknown/protected classification fail-closed.
+- Prefer focused Node tests, static checks and mocked browser harnesses. Browser/account smokes remain user-run unless separately authorized.
+- Never expose browser cookies, tokens, authenticated endpoints, private archived chats or session payloads in logs/evidence.
+- Use `ai-dev worktree create/bootstrap` with its manifest-aware conflict checks; the original bulk-delete compatibility wrapper remains supported. Never refresh a populated worktree without checking ownership.
+- The Codex autonomous task policy applies to Codex, not by implication to Claude. Claude implementation authority comes from the active task and permission mode.
+- Review high-risk browser-state transitions, partial-failure recovery, persistence and retry invariants before cosmetic changes.

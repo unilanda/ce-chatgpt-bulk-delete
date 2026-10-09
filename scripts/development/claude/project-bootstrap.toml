@@ -1,0 +1,5 @@
+schema_version = 1
+project_slug = "ce-chatgpt-bulk-delete"
+
+[templates]
+root = "templates/CLAUDE.md.in"
